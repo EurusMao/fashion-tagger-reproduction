@@ -96,7 +96,7 @@ fashion-tagger-reproduction/
 └── .gitignore
 ```
 
-The CNN scripts and results document the preliminary baseline experiment. Future training scripts for Fashion Florence fine-tuning will be added after the model's training interface and data requirements have been verified.
+Future training scripts for Fashion Florence fine-tuning will be added after the model's training interface and data requirements have been verified.
 
 ## 8. Project Status
 
