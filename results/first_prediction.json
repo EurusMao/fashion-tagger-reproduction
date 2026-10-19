@@ -1,0 +1,14 @@
+﻿{
+  "image": "test_clothing.png",
+  "model": "anushreeberlia/fashion-florence",
+  "device": "cpu",
+  "prediction": {
+    "category": "dress",
+    "primary_color": "unknown",
+    "material": "silk",
+    "style_tags": [
+      "casual",
+      "sexy"
+    ]
+  }
+}

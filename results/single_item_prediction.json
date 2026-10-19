@@ -1,0 +1,22 @@
+﻿{
+  "image": "single_item.jpg",
+  "model": "anushreeberlia/fashion-florence",
+  "prediction": {
+    "category": "layer",
+    "primary_color": "pink",
+    "material": "knit",
+    "style_tags": [
+      "casual",
+      "trendy"
+    ]
+  },
+  "ground_truth": {
+    "category": "layer",
+    "primary_color": "pink",
+    "material": "knit",
+    "style_tags": [
+      "casual",
+      "trendy"
+    ]
+  }
+}
