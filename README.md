@@ -89,18 +89,9 @@ fashion-tagger-reproduction/
 ├── training/
 │   ├── prepare_dataset.py
 │   ├── prepare_labels_v2.py
-│   ├── split_dataset_v2.py
-│   ├── train_cnn_v2.py
-│   ├── evaluate_v2.py
-│   ├── inspect_labels_v2.py
-│   ├── analyze_errors_v2.py
-│   ├── analyze_predictions_v2.py
-│   └── diagnose_train_predictions_v2.py
+│   └── split_dataset_v2.py
 ├── results/
-│   ├── training_history_v2.csv
-│   ├── test_predictions_v2.csv
-│   ├── confusion_matrix_v2.csv
-│   └── test_summary_v2.json
+│   └── dataset preparation results
 ├── README.md
 └── .gitignore
 ```
