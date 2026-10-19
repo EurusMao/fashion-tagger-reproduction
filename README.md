@@ -68,26 +68,6 @@ The full source dataset is not stored in this repository. The data preparation s
 - Tested clothing images and inspected the returned predictions.
 - Established a starting point for further model evaluation.
 
-### Initial CNN Experiment
-
-To explore the classification task, we implemented a small CNN trained from randomly initialized weights.
-
-This experiment is a preliminary baseline, not the intended final model.
-
-The second experiment achieved:
-
-| Metric | Result |
-|---|---:|
-| Best validation accuracy | 41.2% |
-| Test accuracy | 42.1% |
-| Correct test predictions | 64 / 152 |
-
-The model performed unevenly across categories. Test recall for `dress` was only 6.9%, while the model frequently predicted `top` for images belonging to other categories.
-
-These findings suggest that the initial model struggles to distinguish visually similar clothing categories and that the data, model capacity, and training strategy require further investigation.
-
-The CNN experiment helped us establish a reproducible training and evaluation workflow and identify potential challenges in fashion classification.
-
 ## 6. Current Challenges
 
 ### Fine-Grained Classification
@@ -98,37 +78,7 @@ Broad categories do not fully capture the distinctions needed for a digital ward
 
 The application also needs useful attributes such as color, material, and style. These predictions should be evaluated separately rather than assuming that correct category classification guarantees accurate attributes.
 
-### Dataset Quality
-
-Images may differ in background, composition, pose, and presentation style. Original dataset categories also need consistent mapping to the labels required by our application.
-
-### Model Adaptation
-
-The initial CNN is not sufficiently accurate for our intended application. We plan to investigate fine-tuning Fashion Florence rather than relying on a newly trained CNN as the final solution.
-
-## 7. Planned Approach
-
-### Step 1: Inspect the Existing Model
-
-Review the Fashion Florence architecture, model-loading procedure, inference prompts, and training configuration.
-
-### Step 2: Prepare Fine-Tuning Data
-
-Create a dataset with consistent image-label pairs and more detailed clothing categories. Determine whether category prediction and attribute extraction should be trained as separate tasks or within a structured output format.
-
-### Step 3: Fine-Tune Fashion Florence
-
-Investigate the model's supported training workflow and parameter-efficient fine-tuning methods, such as LoRA, subject to available compute resources.
-
-### Step 4: Evaluate Model Improvements
-
-Compare the original model and the fine-tuned model on the same held-out images using appropriate classification and attribute-level metrics.
-
-### Step 5: Integrate the Improved Model
-
-Connect the selected model to the existing Loom interface and use its predictions to support the digital wardrobe prototype.
-
-## 8. Repository Structure
+## 7. Repository Structure
 
 ```text
 fashion-tagger-reproduction/
@@ -157,33 +107,13 @@ fashion-tagger-reproduction/
 
 The CNN scripts and results document the preliminary baseline experiment. Future training scripts for Fashion Florence fine-tuning will be added after the model's training interface and data requirements have been verified.
 
-## 9. Reproducibility and Resources
-
-The repository is intended to preserve the code, experiment configurations, and evaluation results needed to reproduce our work.
-
-The complete source dataset and local virtual environment are not included in the repository. Users should obtain the dataset from its official source and follow the applicable dataset terms.
-
-The existing model and the planned fine-tuning workflow may require more computational resources than the small CNN baseline. Available hardware and training feasibility will be evaluated before full fine-tuning begins.
-
-## 10. Technologies
-
-- Python
-- PyTorch
-- Hugging Face Transformers
-- Hugging Face Datasets
-- Pillow
-- NumPy
-- Loom
-
-## 11. Project Status
+## 8. Project Status
 
 This project is under active development.
 
-The existing Fashion Florence model has been reproduced locally, and an initial CNN experiment has been completed. We have identified limitations in fine-grained clothing classification and are preparing to investigate fine-tuning the existing model.
-
 The fine-tuned model and its performance improvements have **not yet been completed or verified**.
 
-## 12. Dataset Reference
+## 9. Dataset Reference
 
 Dataset: [Marqo/iMaterialist](https://huggingface.co/datasets/Marqo/iMaterialist)
 
