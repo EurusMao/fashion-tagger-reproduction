@@ -1,49 +1,74 @@
 ﻿# Fashion Tagger Reproduction
 
-A local reproduction of the Fashion Florence model for clothing attribute prediction.
+A local reproduction of the Fashion Florence model for clothing attribute prediction, based on the original [Loom project](https://github.com/anushreeberlia/loom).
+
+This project focuses on running the pretrained model locally to extract structured fashion attributes from clothing images.
 
 ## Features
 
-Given a clothing image, the API predicts:
-- `category`
-- `primary_color`
-- `material`
-- `style_tags`
+Given a clothing image, the model predicts:
 
-The API returns the predictions as JSON.
+- **Category** — clothing category
+- **Primary Color** — the main visible color
+- **Material** — predicted material or fabric structure
+- **Style Tags** — descriptive style labels
+
+The predictions are returned as structured JSON.
+
+## Project Structure
+
+```text
+fashion-tagger-reproduction/
+├── space/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── run_local.py
+├── results/
+│   ├── first_prediction.json
+│   └── single_item_prediction.json
+├── .gitignore
+└── README.md
+```
+
+- `space/app.py`: Implements the image-analysis API.
+- `space/requirements.txt`: Lists the required Python dependencies.
+- `space/run_local.py`: Starts the local API and applies a compatibility workaround for model loading.
+- `results/`: Contains example prediction outputs.
 
 ## Requirements
 
 - Python 3.11
 - Git
-- Internet access for the initial model download
-- Sufficient disk space and memory
+- An internet connection for the initial model download
+- Sufficient disk space and RAM
 
-CPU inference is supported but may be slow.
+The model weights are approximately 3.11 GB. Additional disk space is needed for Python dependencies and cached files.
 
-## Installation on Windows
+CPU inference is supported, but processing may be slow.
 
-Clone this repository:
+## Installation
+
+### 1. Clone the Repository
 
 ```powershell
 git clone https://github.com/EurusMao/fashion-tagger-reproduction.git
 cd fashion-tagger-reproduction
 ```
 
-Create a virtual environment:
+### 2. Create a Virtual Environment
 
 ```powershell
 py -3.11 -m venv .venv
 ```
 
-Install dependencies:
+### 3. Install Dependencies
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install -r .\space\requirements.txt
 ```
 
-## Start the API
+## Run the Local API
 
 From the repository root, run:
 
@@ -51,28 +76,66 @@ From the repository root, run:
 .\.venv\Scripts\python.exe .\space\run_local.py
 ```
 
-Wait for the model to load. The API should run at `http://127.0.0.1:8000`.
+Wait for the model to load. Once startup is complete, the API should be available at:
 
-Keep this terminal open.
+`http://127.0.0.1:8000`
 
-## Test with an image
+Keep the terminal running while using the API.
 
-Open a second PowerShell window and navigate to the repository folder. Run:
+**Note:** This is a local API service, not a publicly hosted endpoint. The address `127.0.0.1` refers to the computer running the service.
+
+## Test with a Clothing Image
+
+Open a second PowerShell terminal and navigate to the repository directory.
+
+Place a clothing image in the repository root, for example, `test_clothing.png`.
+
+Submit the image to the API:
 
 ```powershell
 curl.exe -X POST `
-  -F "file=@path\to\your_image.png" `
+  -F "file=@test_clothing.png" `
   http://127.0.0.1:8000/analyze
 ```
 
-Replace `path\to\your_image.png` with the actual image path.
+Replace `test_clothing.png` with the path to your own image.
 
-The response should contain the predicted clothing attributes in JSON format.
+The API should return a JSON response containing the predicted fashion attributes.
 
-## Model and limitations
+## Example Output
 
-The model is downloaded from Hugging Face on first startup. Internet access is required for the initial download, which may take time.
+```json
+{
+  "category": "layer",
+  "primary_color": "pink",
+  "material": "knit",
+  "style_tags": [
+    "casual",
+    "trendy"
+  ]
+}
+```
 
-Predictions are estimates and are not guaranteed to be correct. Files in `results/` are example outputs, not a comprehensive accuracy evaluation.
+This is an illustrative example of the response format. Actual predictions depend on the input image.
 
-This repository runs inference; it does not retrain the model.
+## Results
+
+The `results/` directory contains example outputs generated during local model inference.
+
+These examples demonstrate the model's ability to generate structured fashion tags. They do not represent a comprehensive accuracy evaluation.
+
+## Limitations
+
+- Predictions are model-generated estimates and may be incorrect.
+- Material predictions describe visual appearance and cannot verify the garment's actual fiber composition.
+- The current API returns one set of attributes per image. It does not independently detect and classify every garment in a multi-item collage.
+- This repository runs inference using a pretrained model; it does not retrain the model.
+- The initial model download requires an internet connection and may take time.
+- The local compatibility workaround in `run_local.py` bypasses the `flash_attn` import check during model loading. It has been tested in the development environment, but compatibility should be verified on other machines.
+
+## References
+
+- **Original Project:** [Loom](https://github.com/anushreeberlia/loom)
+- **Pretrained Model:** [Fashion Florence on Hugging Face](https://huggingface.co/anushreeberlia/fashion-florence)
+
+Please consult the original project and model repositories for their applicable licenses, attribution requirements, and usage conditions.
