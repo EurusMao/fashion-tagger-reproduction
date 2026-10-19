@@ -48,17 +48,6 @@ For our initial experiments, we streamed a subset of the dataset and collected a
 | `outerwear` | Jackets, coats, blazers |
 | `other` | Swimwear, lingerie, sleepwear, selected footwear |
 
-After correcting several category mappings and excluding five images labeled as `Petticoats`, the second dataset version contains 995 images.
-
-| Split | Images |
-|---|---:|
-| Training | 695 |
-| Validation | 148 |
-| Test | 152 |
-| **Total** | **995** |
-
-These broad categories were created for our initial CNN experiment. The label definitions and dataset format may be refined for Fashion Florence fine-tuning.
-
 The full source dataset is not stored in this repository. The data preparation scripts and dataset source will be documented to support reproducibility.
 
 ## 5. Work Completed
