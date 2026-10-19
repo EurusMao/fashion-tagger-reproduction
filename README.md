@@ -39,12 +39,6 @@ fashion-tagger-reproduction/
 
 - Python 3.11
 - Git
-- An internet connection for the initial model download
-- Sufficient disk space and RAM
-
-The model weights are approximately 3.11 GB. Additional disk space is needed for Python dependencies and cached files.
-
-CPU inference is supported, but processing may be slow.
 
 ## Installation
 
@@ -67,22 +61,6 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install -r .\space\requirements.txt
 ```
-
-## Run the Local API
-
-From the repository root, run:
-
-```powershell
-.\.venv\Scripts\python.exe .\space\run_local.py
-```
-
-Wait for the model to load. Once startup is complete, the API should be available at:
-
-`http://127.0.0.1:8000`
-
-Keep the terminal running while using the API.
-
-**Note:** This is a local API service, not a publicly hosted endpoint. The address `127.0.0.1` refers to the computer running the service.
 
 ## Test with a Clothing Image
 
@@ -130,8 +108,6 @@ These examples demonstrate the model's ability to generate structured fashion ta
 - Material predictions describe visual appearance and cannot verify the garment's actual fiber composition.
 - The current API returns one set of attributes per image. It does not independently detect and classify every garment in a multi-item collage.
 - This repository runs inference using a pretrained model; it does not retrain the model.
-- The initial model download requires an internet connection and may take time.
-- The local compatibility workaround in `run_local.py` bypasses the `flash_attn` import check during model loading. It has been tested in the development environment, but compatibility should be verified on other machines.
 
 ## References
 
