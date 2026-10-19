@@ -1,21 +1,153 @@
-﻿# Fashion Tagger Reproduction
+﻿# Fashion Tagger: Clothing Classification and Digital Wardrobe
 
-A local reproduction of the Fashion Florence model for clothing attribute prediction, based on the original [Loom project](https://github.com/anushreeberlia/loom).
+## Project Overview
 
-This project focuses on running the pretrained model locally to extract structured fashion attributes from clothing images.
+This project explores an AI-powered digital wardrobe system that helps users organize clothing items and supports future outfit recommendation features.
 
-## Features
+The current development focuses on building and evaluating an image classification pipeline for clothing categories. We are experimenting with a small Convolutional Neural Network (CNN) trained from scratch using the PyTorch framework.
 
-Given a clothing image, the model predicts:
+The project is currently in the model development and evaluation stage.
 
-- **Category** — clothing category
-- **Primary Color** — the main visible color
-- **Material** — predicted material or fabric structure
-- **Style Tags** — descriptive style labels
+## Project Goals
 
-The predictions are returned as structured JSON.
+- Build a reproducible clothing image classification pipeline.
+- Collect and preprocess fashion images.
+- Map fine-grained clothing categories into five broader classes.
+- Train and evaluate a CNN model.
+- Analyze classification errors and identify areas for improvement.
+- Integrate the trained model into the digital wardrobe application in a later stage.
 
-## Project Structure
+## Dataset
+
+**Dataset:** [Marqo/iMaterialist on Hugging Face](https://huggingface.co/datasets/Marqo/iMaterialist)
+
+The dataset contains clothing images and associated attributes, including category, color, material, pattern, sleeve type, neckline, and style.
+
+We use the original `category` field to create five broad classification labels:
+
+| Label | Examples |
+|---|---|
+| `top` | T-shirts, blouses, sweaters, tank tops |
+| `bottom` | Pants, jeans, shorts, skirts |
+| `dress` | Dresses, casual dresses, jumpsuits and rompers |
+| `outerwear` | Jackets, coats, blazers |
+| `other` | Swimwear, lingerie, sleepwear, selected footwear |
+
+These labels are project-defined categories rather than the original dataset taxonomy.
+
+### Data Processing
+
+The current pipeline:
+
+1. Streams a limited number of records from the original dataset rather than downloading the entire dataset.
+2. Selects images belonging to the target clothing categories.
+3. Maps the original categories into five broad labels.
+4. Resizes images to 128 × 128 pixels.
+5. Creates training, validation, and test splits.
+
+The second dataset version excludes five images labeled as `Petticoats` and corrects the mapping of `Dress Shirts` to `top`.
+
+The resulting dataset contains 995 images.
+
+| Split | Images |
+|---|---:|
+| Training | 695 |
+| Validation | 148 |
+| Test | 152 |
+| **Total** | **995** |
+
+The original dataset is not included in this repository. Users should access it through the official Hugging Face page and follow its applicable usage terms and citation requirements.
+
+## Model
+
+We implemented a small CNN using PyTorch, trained from randomly initialized weights.
+
+Model configuration:
+
+- Input image size: 128 × 128 pixels
+- Output classes: 5
+- Trainable parameters: 98,565
+- Optimizer: Adam
+- Batch size: 32
+- Training epochs: 15
+- Execution device: CPU
+
+The model uses convolutional layers, batch normalization, ReLU activations, max pooling, adaptive average pooling, and a fully connected classification layer.
+
+## Current Results
+
+The second CNN experiment achieved the following results:
+
+| Metric | Result |
+|---|---:|
+| Best validation accuracy | 41.2% |
+| Best checkpoint epoch | 6 |
+| Test accuracy | 42.1% |
+| Correct test predictions | 64 / 152 |
+| Training accuracy at the selected checkpoint | 42.9% |
+
+### Per-Class Test Recall
+
+| Class | Recall |
+|---|---:|
+| `bottom` | 56.7% |
+| `dress` | 6.9% |
+| `other` | 60.0% |
+| `outerwear` | 30.0% |
+| `top` | 54.5% |
+
+These results indicate that the model has not yet learned to distinguish all clothing categories reliably.
+
+### Current Challenges
+
+**1. Prediction imbalance**
+
+The model predicts `top` 63 times in the test set, although only 33 images actually belong to that category. This suggests a strong tendency to overpredict `top`.
+
+**2. Poor dress recognition**
+
+Only 2 of the 29 test images labeled `dress` were correctly classified. The model frequently confuses dresses with tops.
+
+**3. Limited training data and model capacity**
+
+The current experiment uses fewer than 1,000 images and a small CNN trained from scratch. The model may not learn sufficiently robust visual features from this limited dataset.
+
+**4. Variation in image presentation**
+
+The dataset includes different product photography styles, backgrounds, poses, and image compositions. These variations may make classification more difficult.
+
+**5. Category ambiguity**
+
+Some clothing categories have similar visual characteristics. The project needs consistent label definitions and further inspection of potentially ambiguous samples.
+
+## Current Development Status
+
+### Completed
+
+- Dataset streaming and image collection
+- Clothing category mapping and data cleaning
+- Training, validation, and test split generation
+- Baseline CNN implementation and training
+- Test-set evaluation
+- Confusion matrix and per-class recall analysis
+- Error inspection and prediction distribution analysis
+
+### In Progress
+
+- Investigating the CNN's prediction bias
+- Improving classification performance, especially for `dress` and `outerwear`
+- Reviewing data quality and category definitions
+- Comparing potential model improvement strategies
+
+### Future Work
+
+- Experiment with improved training strategies and data augmentation.
+- Evaluate class-weighted loss and pretrained image models.
+- Compare model performance using consistent evaluation metrics.
+- Integrate the selected model into the digital wardrobe prototype.
+- Explore additional attributes such as color, material, and style.
+
+## Repository Structure
 
 ```text
 fashion-tagger-reproduction/
@@ -23,95 +155,57 @@ fashion-tagger-reproduction/
 │   ├── app.py
 │   ├── requirements.txt
 │   └── run_local.py
+├── training/
+│   ├── prepare_dataset.py
+│   ├── prepare_labels_v2.py
+│   ├── split_dataset_v2.py
+│   ├── train_cnn_v2.py
+│   ├── evaluate_v2.py
+│   ├── inspect_labels_v2.py
+│   ├── analyze_errors_v2.py
+│   ├── analyze_predictions_v2.py
+│   └── diagnose_train_predictions_v2.py
 ├── results/
-│   ├── first_prediction.json
-│   └── single_item_prediction.json
-├── .gitignore
-└── README.md
+│   ├── training_history_v2.csv
+│   ├── test_predictions_v2.csv
+│   ├── confusion_matrix_v2.csv
+│   └── test_summary_v2.json
+├── README.md
+└── .gitignore
 ```
 
-- `space/app.py`: Implements the image-analysis API.
-- `space/requirements.txt`: Lists the required Python dependencies.
-- `space/run_local.py`: Starts the local API and applies a compatibility workaround for model loading.
-- `results/`: Contains example prediction outputs.
+The repository structure may evolve as development continues. Generated datasets, model checkpoints, and local environment files are not necessarily included in version control.
 
-## Requirements
+## Reproducibility
 
-- Python 3.11
-- Git
+The training and evaluation scripts are maintained separately so that each stage can be inspected and rerun.
 
-## Installation
+The intended workflow is:
 
-### 1. Clone the Repository
+1. Prepare the dataset.
+2. Apply the corrected category mapping.
+3. Generate the data splits.
+4. Train the CNN.
+5. Evaluate the saved model on the test set.
+6. Inspect prediction errors and record findings.
 
-```powershell
-git clone https://github.com/EurusMao/fashion-tagger-reproduction.git
-cd fashion-tagger-reproduction
-```
+Exact execution instructions and dependency versions will be maintained alongside the scripts as the pipeline is finalized.
 
-### 2. Create a Virtual Environment
+## Technologies
 
-```powershell
-py -3.11 -m venv .venv
-```
+- Python
+- PyTorch
+- Hugging Face Datasets
+- NumPy
+- Pillow
+- CSV-based experiment tracking
 
-### 3. Install Dependencies
+## Dataset Citation
 
-```powershell
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -r .\space\requirements.txt
-```
+Guo, S., Huang, W., Zhang, X., Srikhanta, P., Cui, Y., Li, Y., Scott, M. R., Adam, H., & Belongie, S. (2019). *The iMaterialist Fashion Attribute Dataset*. arXiv preprint arXiv:1906.05750.
 
-## Test with a Clothing Image
+Dataset: https://huggingface.co/datasets/Marqo/iMaterialist
 
-Open a second PowerShell terminal and navigate to the repository directory.
+## Project Status
 
-Place a clothing image in the repository root, for example, `test_clothing.png`.
-
-Submit the image to the API:
-
-```powershell
-curl.exe -X POST `
-  -F "file=@test_clothing.png" `
-  http://127.0.0.1:8000/analyze
-```
-
-Replace `test_clothing.png` with the path to your own image.
-
-The API should return a JSON response containing the predicted fashion attributes.
-
-## Example Output
-
-```json
-{
-  "category": "layer",
-  "primary_color": "pink",
-  "material": "knit",
-  "style_tags": [
-    "casual",
-    "trendy"
-  ]
-}
-```
-
-This is an illustrative example of the response format. Actual predictions depend on the input image.
-
-## Results
-
-The `results/` directory contains example outputs generated during local model inference.
-
-These examples demonstrate the model's ability to generate structured fashion tags. They do not represent a comprehensive accuracy evaluation.
-
-## Limitations
-
-- Predictions are model-generated estimates and may be incorrect.
-- Material predictions describe visual appearance and cannot verify the garment's actual fiber composition.
-- The current API returns one set of attributes per image. It does not independently detect and classify every garment in a multi-item collage.
-- This repository runs inference using a pretrained model; it does not retrain the model.
-
-## References
-
-- **Original Project:** [Loom](https://github.com/anushreeberlia/loom)
-- **Pretrained Model:** [Fashion Florence on Hugging Face](https://huggingface.co/anushreeberlia/fashion-florence)
-
-Please consult the original project and model repositories for their applicable licenses, attribution requirements, and usage conditions.
+This is an ongoing academic project. The current CNN is a baseline model, and its classification performance remains limited. The findings reported here represent intermediate experimental results rather than a final production-ready system.
