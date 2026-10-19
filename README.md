@@ -1,53 +1,54 @@
 ﻿# Fashion Tagger: Clothing Classification and Digital Wardrobe
 
-## Project Overview
+## 1. Project Overview
 
-This project explores an AI-powered digital wardrobe system that helps users organize clothing items and supports future outfit recommendation features.
+Fashion Tagger is an AI-powered digital wardrobe project designed to help users organize their clothing items and support future outfit recommendation features.
 
-The current development focuses on building and evaluating an image classification pipeline for clothing categories. We are experimenting with a small Convolutional Neural Network (CNN) trained from scratch using the PyTorch framework.
+The project builds on Loom and the existing Fashion Florence model. Our goal is to improve clothing classification and attribute extraction by fine-tuning the existing model for more detailed and accurate fashion categories.
 
-The project is currently in the model development and evaluation stage.
+Rather than building an entirely new vision model from scratch, we aim to adapt an existing fashion-focused model to better meet the needs of our application.
 
-## Project Goals
+**Current status:** Existing model reproduction and initial experimentation completed. Fine-tuning and model improvement are planned next steps.
 
-- Build a reproducible clothing image classification pipeline.
-- Collect and preprocess fashion images.
-- Map fine-grained clothing categories into five broader classes.
-- Train and evaluate a CNN model.
-- Analyze classification errors and identify areas for improvement.
-- Integrate the trained model into the digital wardrobe application in a later stage.
+## 2. Project Objectives
 
-## Dataset
+- Reproduce and run the existing Fashion Florence model locally.
+- Analyze its clothing classification and attribute extraction capabilities.
+- Prepare a fashion image dataset with consistent category labels.
+- Fine-tune the existing model to improve recognition of specific clothing categories.
+- Compare the original model with the fine-tuned model.
+- Integrate the improved model into the digital wardrobe application.
 
-**Dataset:** [Marqo/iMaterialist on Hugging Face](https://huggingface.co/datasets/Marqo/iMaterialist)
+## 3. Existing Model
 
-The dataset contains clothing images and associated attributes, including category, color, material, pattern, sleeve type, neckline, and style.
+**Base project:** Loom  
+**Model:** [Fashion Florence](https://huggingface.co/anushreeberlia/fashion-florence)  
+**Underlying architecture:** Florence-2-large  
+**Framework:** PyTorch and Hugging Face Transformers
 
-We use the original `category` field to create five broad classification labels:
+Fashion Florence is an existing model fine-tuned for fashion-related image understanding and attribute extraction.
+
+The current Loom implementation provides a local interface for submitting clothing images and returning structured predictions, including clothing category, color, material, and style-related information.
+
+We will retain this implementation as the foundation for subsequent model improvement.
+
+## 4. Dataset
+
+**Dataset source:** [Marqo/iMaterialist on Hugging Face](https://huggingface.co/datasets/Marqo/iMaterialist)
+
+The dataset provides fashion images and attributes such as category, color, material, pattern, sleeve type, neckline, and style.
+
+For our initial experiments, we streamed a subset of the dataset and collected approximately 1,000 images. We mapped the original fine-grained categories into five broad labels:
 
 | Label | Examples |
 |---|---|
-| `top` | T-shirts, blouses, sweaters, tank tops |
+| `top` | T-shirts, blouses, tank tops, sweaters |
 | `bottom` | Pants, jeans, shorts, skirts |
-| `dress` | Dresses, casual dresses, jumpsuits and rompers |
+| `dress` | Dresses, jumpsuits, rompers |
 | `outerwear` | Jackets, coats, blazers |
 | `other` | Swimwear, lingerie, sleepwear, selected footwear |
 
-These labels are project-defined categories rather than the original dataset taxonomy.
-
-### Data Processing
-
-The current pipeline:
-
-1. Streams a limited number of records from the original dataset rather than downloading the entire dataset.
-2. Selects images belonging to the target clothing categories.
-3. Maps the original categories into five broad labels.
-4. Resizes images to 128 × 128 pixels.
-5. Creates training, validation, and test splits.
-
-The second dataset version excludes five images labeled as `Petticoats` and corrects the mapping of `Dress Shirts` to `top`.
-
-The resulting dataset contains 995 images.
+After correcting several category mappings and excluding five images labeled as `Petticoats`, the second dataset version contains 995 images.
 
 | Split | Images |
 |---|---:|
@@ -56,98 +57,80 @@ The resulting dataset contains 995 images.
 | Test | 152 |
 | **Total** | **995** |
 
-The original dataset is not included in this repository. Users should access it through the official Hugging Face page and follow its applicable usage terms and citation requirements.
+These broad categories were created for our initial CNN experiment. The label definitions and dataset format may be refined for Fashion Florence fine-tuning.
 
-## Model
+The full source dataset is not stored in this repository. The data preparation scripts and dataset source will be documented to support reproducibility.
 
-We implemented a small CNN using PyTorch, trained from randomly initialized weights.
+## 5. Work Completed
 
-Model configuration:
+### Existing Model Reproduction
 
-- Input image size: 128 × 128 pixels
-- Output classes: 5
-- Trainable parameters: 98,565
-- Optimizer: Adam
-- Batch size: 32
-- Training epochs: 15
-- Execution device: CPU
+- Set up the local Python environment.
+- Ran the existing Fashion Florence model through the Loom implementation.
+- Tested clothing images and inspected the returned predictions.
+- Established a starting point for further model evaluation.
 
-The model uses convolutional layers, batch normalization, ReLU activations, max pooling, adaptive average pooling, and a fully connected classification layer.
+### Initial CNN Experiment
 
-## Current Results
+To explore the classification task, we implemented a small CNN trained from randomly initialized weights.
 
-The second CNN experiment achieved the following results:
+This experiment is a preliminary baseline, not the intended final model.
+
+The second experiment achieved:
 
 | Metric | Result |
 |---|---:|
 | Best validation accuracy | 41.2% |
-| Best checkpoint epoch | 6 |
 | Test accuracy | 42.1% |
 | Correct test predictions | 64 / 152 |
-| Training accuracy at the selected checkpoint | 42.9% |
 
-### Per-Class Test Recall
+The model performed unevenly across categories. Test recall for `dress` was only 6.9%, while the model frequently predicted `top` for images belonging to other categories.
 
-| Class | Recall |
-|---|---:|
-| `bottom` | 56.7% |
-| `dress` | 6.9% |
-| `other` | 60.0% |
-| `outerwear` | 30.0% |
-| `top` | 54.5% |
+These findings suggest that the initial model struggles to distinguish visually similar clothing categories and that the data, model capacity, and training strategy require further investigation.
 
-These results indicate that the model has not yet learned to distinguish all clothing categories reliably.
+The CNN experiment helped us establish a reproducible training and evaluation workflow and identify potential challenges in fashion classification.
 
-### Current Challenges
+## 6. Current Challenges
 
-**1. Prediction imbalance**
+### Fine-Grained Classification
 
-The model predicts `top` 63 times in the test set, although only 33 images actually belong to that category. This suggests a strong tendency to overpredict `top`.
+Broad categories do not fully capture the distinctions needed for a digital wardrobe. We ultimately want to distinguish more specific items, such as blouses, T-shirts, cardigans, jackets, skirts, and dresses.
 
-**2. Poor dress recognition**
+### Attribute Accuracy
 
-Only 2 of the 29 test images labeled `dress` were correctly classified. The model frequently confuses dresses with tops.
+The application also needs useful attributes such as color, material, and style. These predictions should be evaluated separately rather than assuming that correct category classification guarantees accurate attributes.
 
-**3. Limited training data and model capacity**
+### Dataset Quality
 
-The current experiment uses fewer than 1,000 images and a small CNN trained from scratch. The model may not learn sufficiently robust visual features from this limited dataset.
+Images may differ in background, composition, pose, and presentation style. Original dataset categories also need consistent mapping to the labels required by our application.
 
-**4. Variation in image presentation**
+### Model Adaptation
 
-The dataset includes different product photography styles, backgrounds, poses, and image compositions. These variations may make classification more difficult.
+The initial CNN is not sufficiently accurate for our intended application. We plan to investigate fine-tuning Fashion Florence rather than relying on a newly trained CNN as the final solution.
 
-**5. Category ambiguity**
+## 7. Planned Approach
 
-Some clothing categories have similar visual characteristics. The project needs consistent label definitions and further inspection of potentially ambiguous samples.
+### Step 1: Inspect the Existing Model
 
-## Current Development Status
+Review the Fashion Florence architecture, model-loading procedure, inference prompts, and training configuration.
 
-### Completed
+### Step 2: Prepare Fine-Tuning Data
 
-- Dataset streaming and image collection
-- Clothing category mapping and data cleaning
-- Training, validation, and test split generation
-- Baseline CNN implementation and training
-- Test-set evaluation
-- Confusion matrix and per-class recall analysis
-- Error inspection and prediction distribution analysis
+Create a dataset with consistent image-label pairs and more detailed clothing categories. Determine whether category prediction and attribute extraction should be trained as separate tasks or within a structured output format.
 
-### In Progress
+### Step 3: Fine-Tune Fashion Florence
 
-- Investigating the CNN's prediction bias
-- Improving classification performance, especially for `dress` and `outerwear`
-- Reviewing data quality and category definitions
-- Comparing potential model improvement strategies
+Investigate the model's supported training workflow and parameter-efficient fine-tuning methods, such as LoRA, subject to available compute resources.
 
-### Future Work
+### Step 4: Evaluate Model Improvements
 
-- Experiment with improved training strategies and data augmentation.
-- Evaluate class-weighted loss and pretrained image models.
-- Compare model performance using consistent evaluation metrics.
-- Integrate the selected model into the digital wardrobe prototype.
-- Explore additional attributes such as color, material, and style.
+Compare the original model and the fine-tuned model on the same held-out images using appropriate classification and attribute-level metrics.
 
-## Repository Structure
+### Step 5: Integrate the Improved Model
+
+Connect the selected model to the existing Loom interface and use its predictions to support the digital wardrobe prototype.
+
+## 8. Repository Structure
 
 ```text
 fashion-tagger-reproduction/
@@ -174,38 +157,36 @@ fashion-tagger-reproduction/
 └── .gitignore
 ```
 
-The repository structure may evolve as development continues. Generated datasets, model checkpoints, and local environment files are not necessarily included in version control.
+The CNN scripts and results document the preliminary baseline experiment. Future training scripts for Fashion Florence fine-tuning will be added after the model's training interface and data requirements have been verified.
 
-## Reproducibility
+## 9. Reproducibility and Resources
 
-The training and evaluation scripts are maintained separately so that each stage can be inspected and rerun.
+The repository is intended to preserve the code, experiment configurations, and evaluation results needed to reproduce our work.
 
-The intended workflow is:
+The complete source dataset and local virtual environment are not included in the repository. Users should obtain the dataset from its official source and follow the applicable dataset terms.
 
-1. Prepare the dataset.
-2. Apply the corrected category mapping.
-3. Generate the data splits.
-4. Train the CNN.
-5. Evaluate the saved model on the test set.
-6. Inspect prediction errors and record findings.
+The existing model and the planned fine-tuning workflow may require more computational resources than the small CNN baseline. Available hardware and training feasibility will be evaluated before full fine-tuning begins.
 
-Exact execution instructions and dependency versions will be maintained alongside the scripts as the pipeline is finalized.
-
-## Technologies
+## 10. Technologies
 
 - Python
 - PyTorch
+- Hugging Face Transformers
 - Hugging Face Datasets
-- NumPy
 - Pillow
-- CSV-based experiment tracking
+- NumPy
+- Loom
 
-## Dataset Citation
+## 11. Project Status
 
-Guo, S., Huang, W., Zhang, X., Srikhanta, P., Cui, Y., Li, Y., Scott, M. R., Adam, H., & Belongie, S. (2019). *The iMaterialist Fashion Attribute Dataset*. arXiv preprint arXiv:1906.05750.
+This project is under active development.
 
-Dataset: https://huggingface.co/datasets/Marqo/iMaterialist
+The existing Fashion Florence model has been reproduced locally, and an initial CNN experiment has been completed. We have identified limitations in fine-grained clothing classification and are preparing to investigate fine-tuning the existing model.
 
-## Project Status
+The fine-tuned model and its performance improvements have **not yet been completed or verified**.
 
-This is an ongoing academic project. The current CNN is a baseline model, and its classification performance remains limited. The findings reported here represent intermediate experimental results rather than a final production-ready system.
+## 12. Dataset Reference
+
+Dataset: [Marqo/iMaterialist](https://huggingface.co/datasets/Marqo/iMaterialist)
+
+The dataset should be cited and used according to its official documentation and applicable terms.
