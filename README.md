@@ -8,7 +8,7 @@ The project builds on Loom and the existing Fashion Florence model. Our goal is 
 
 Rather than building an entirely new vision model from scratch, we aim to adapt an existing fashion-focused model to better meet the needs of our application.
 
-**Current status:** Existing model reproduction and initial experimentation completed. Fine-tuning and model improvement are planned next steps.
+**Current Status**: Existing model reproduction and initial experimentation completed. Fine-tuning and model improvement are planned next steps.
 
 ## 2. Project Objectives
 
@@ -63,16 +63,25 @@ The full source dataset is not stored in this repository. The data preparation s
 
 ### Existing Model Reproduction
 
-- Set up the local Python environment.
-- Ran the existing Fashion Florence model through the Loom implementation.
-- Tested clothing images and inspected the returned predictions.
-- Established a starting point for further model evaluation.
+The current implementation supports CPU execution. CUDA is used automatically when an available CUDA-compatible GPU is detected.
+
+- Download the GitHub repository as a ZIP file and extract it to your computer.
+- Open the extracted project folder in your Python environment (e.g., PyCharm).
+- Before running the model, install all dependencies listed in space/requirements.txt
+- Run the **run_local.py** file, wait for the model to load and the local server to start.
+- Once the URL is open:
+    Find the POST /analyze endpoint.
+    Click Try it out.
+    Upload a clothing image.
+    Click Execute to run the model.
+    View the returned JSON predictions.
+The model should return structured fashion attributes, including clothing category, color, material, and style tags.
 
 ## 6. Current Challenges
 
 ### Fine-Grained Classification
 
-Broad categories do not fully capture the distinctions needed for a digital wardrobe. We ultimately want to distinguish more specific items, such as blouses, T-shirts, cardigans, jackets, skirts, and dresses.
+Broad categories do not fully capture the distinctions needed for a digital wardrobe. We want to distinguish more specific items, such as blouses, T-shirts, cardigans, jackets, skirts, and dresses.
 
 ### Attribute Accuracy
 
@@ -95,17 +104,6 @@ fashion-tagger-reproduction/
 ├── README.md
 └── .gitignore
 ```
-
-Future training scripts for Fashion Florence fine-tuning will be added after the model's training interface and data requirements have been verified.
-
-## 8. Project Status
-
-This project is under active development.
-
-The fine-tuned model and its performance improvements have **not yet been completed or verified**.
-
-## 9. Dataset Reference
-
 Dataset: [Marqo/iMaterialist](https://huggingface.co/datasets/Marqo/iMaterialist)
 
 The dataset should be cited and used according to its official documentation and applicable terms.
